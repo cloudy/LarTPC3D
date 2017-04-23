@@ -1,0 +1,3 @@
+[submodule "LArTPCDNN"]
+	path = LArTPCDNN
+	url = https://github.com/UTA-HEP-Computing/LArTPCDNN
