@@ -1,0 +1,3 @@
+import LArTPCDNN
+
+print "Hello"
