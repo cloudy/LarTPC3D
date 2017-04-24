@@ -1,5 +1,14 @@
 import LArTPCDNN
-import h5py
+import ProcessData
 
-data = h5py.File("../../data/apr_9/2d/muon_48.2d.h5")
-print(data["features"].shape)
+
+
+def main():
+    data = h5py.File("/data/datasets/LarTPC/apr_9/2d/muon_48.2d.h5")
+    print(data["features"].shape)
+
+
+
+    
+if __name__ == "__main__":
+    main()
