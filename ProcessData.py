@@ -1,14 +1,24 @@
 import h5py
 import os
+import numpy as np
 
 
-def LoadData(Path, SpecificFile = None):
-    if (SpecificFile != None):
-        return 
+def loaddata(filepath, key = None):
+    file = h5py.File(filepath, "r")
+    if key != None:
+        return file[key]
+
+    return file
+
+def savedata(data, outputpath, filename):
+    savefile = h5py.File(outputpath + filename, 'w')
+    savefile.create_dataset(filename, data=data)
+
+    savefile.close()
 
 
 # Written by Dr. Farbin
-def OrganizeFiles(Files):
+def organizefiles(Files):
     FileCount= {}  # Store the count here
     FileLists= {}  # Organize the files by particle type here.
 
@@ -38,7 +48,7 @@ def OrganizeFiles(Files):
 
 
 # Written by Dr. Farbin
-def DownSample(y,factor,Nx,Ny,Nz,Nw,sumabs=False):
+def downsample(y,factor,Nx,Ny,Nz,Nw,sumabs=False):
     if factor==0:
         return np.reshape(y,[Nx,Ny,Nz,Nw]),Nw
     # Remove entries at the end so Down Sampling works
