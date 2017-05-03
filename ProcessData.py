@@ -3,48 +3,42 @@ import os
 import numpy as np
 
 
-def loaddata(filepath, key = None):
+def loaddata(filepath, key = None, is3D = False, shape = (240, 240, 256)):
     file = h5py.File(filepath, "r")
-    if key != None:
-        return file[key]
+    
+    if is3D == True:
+        print "loading 3D file: ", filepath
+        d3dc = file["images3D/C"]
+        d3dv = file["images3D/V"]
+        retc = []
+        for i, x  in enumerate(d3dc):
+            retc.append(np.histogramdd(x, bins=shape, weights=d3dv[i])[0])
 
-    return file
+        return retc
 
-def savedata(data, outputpath, filename):
+    else:
+        print "loading 2D file: ", filepath
+        if key != None:
+            return file[key], file
+
+        return file
+
+
+def loaddata3d(filepath):
+    print "loading: ", filepath
+
+
+def savedata(dgroup, fulldata, sdata, skey, outputpath, filename):
+    print " saving: ", outputpath + filename
     savefile = h5py.File(outputpath + filename, 'w')
-    savefile.create_dataset(filename, data=data)
+    for k in fulldata.keys():
+        if k == skey:
+            data = sdata
+        else:
+            data = fulldata[k]
+        savefile.create_dataset(dgroup + "/" + k, data=data, compression='gzip')
 
     savefile.close()
-
-
-# Written by Dr. Farbin
-def organizefiles(Files):
-    FileCount= {}  # Store the count here
-    FileLists= {}  # Organize the files by particle type here.
-
-    for aFile in Files:
-        # Lets strip the path (everything before the "/"s) and get the filename:
-        FileName=os.path.basename(aFile)
-    
-        # Now use everything before the first "_" as the particle name
-        ParticleName=FileName.split('_')[0]
-    
-        if ParticleName in FileCount.keys():
-            FileCount[ParticleName]+=1
-            FileLists[ParticleName].append(aFile)
-        else:
-            FileCount[ParticleName]=1
-            FileLists[ParticleName]= [aFile]
-    
-    print "Number of types of particles:", len(FileCount.keys())
-    print "----------------------------------------------------------"
-    print "Number of files for each particle type:", FileCount
-    print "----------------------------------------------------------"
-    print "First file of each type:"
-    for aFile in FileLists:
-        print aFile,":",FileLists[aFile][0]
-        
-    return FileLists,FileCount
 
 
 # Written by Dr. Farbin
